@@ -1,13 +1,14 @@
 [project]
 name = "faster-whisper-server"
 version = "0.0.3"
-description = "OpenAI-compatible FastAPI server for faster-whisper."
+description = "OpenAI-compatible FastAPI server for faster-whisper (Flobic fork)."
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
 	{ name = "andyjjrt" },
 ]
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 keywords = [
 	"whisper",
 	"faster-whisper",
@@ -17,7 +18,6 @@ keywords = [
 ]
 classifiers = [
 	"Development Status :: 3 - Alpha",
-	"License :: OSI Approved :: MIT License",
 	"Programming Language :: Python :: 3",
 	"Programming Language :: Python :: 3 :: Only",
 	"Programming Language :: Python :: 3.10",
@@ -32,12 +32,14 @@ dependencies = [
 	"uvicorn[standard]>=0.29.0",
 	"python-multipart>=0.0.9",
 	"pyyaml>=6.0.1",
-	"faster-whisper>=1.2.1",
+	"numpy>=1.23",
+	"faster-whisper @ git+https://github.com/flobic09/faster-whisper.git@wav-only-faster-whisper",
 ]
 
 [project.urls]
-Homepage = "https://github.com/andyjjrt/faster-whisper-server"
-Repository = "https://github.com/andyjjrt/faster-whisper-server"
+Homepage = "https://github.com/flobic09/faster-whisper-server"
+Repository = "https://github.com/flobic09/faster-whisper-server"
+"Upstream Repository" = "https://github.com/andyjjrt/faster-whisper-server"
 
 [project.scripts]
 faster-whisper-server = "faster_whisper_server.cli:main"
@@ -45,6 +47,7 @@ faster-whisper-server = "faster_whisper_server.cli:main"
 [project.optional-dependencies]
 dev = [
 	"pre-commit>=3.7.1",
+	"pytest>=8.0",
 	"ruff>=0.6.8",
 	"build>=1.4.0",
 ]
@@ -63,6 +66,7 @@ indent-style = "space"
 [dependency-groups]
 dev = [
     "pre-commit>=4.5.1",
+    "pytest>=8.0",
     "ruff>=0.15.0",
 ]
 

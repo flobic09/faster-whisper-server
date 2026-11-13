@@ -6,8 +6,11 @@ from contextlib import asynccontextmanager
 from importlib.metadata import PackageNotFoundError, version
 from typing import Optional, Union
 
+import numpy as np
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from starlette.concurrency import run_in_threadpool
 
+from .audio import decode_wav
 from .models import (
     AudioJsonResponse,
     AudioVerboseJsonResponse,
@@ -15,6 +18,10 @@ from .models import (
     get_transcriber_for_request,
     initialize_from_env,
 )
+
+
+def _decode_upload_sync(file: UploadFile) -> np.ndarray:
+    return decode_wav(file.file.read(), sampling_rate=16000)
 
 
 @asynccontextmanager
@@ -63,6 +70,23 @@ def _select_transcriber(model_name: str, task: str):
         ) from exc
 
 
+async def _decode_upload(file: UploadFile) -> np.ndarray:
+    try:
+        return await run_in_threadpool(_decode_upload_sync, file)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {
+                    "message": str(exc),
+                    "type": "invalid_request_error",
+                }
+            },
+        ) from exc
+    finally:
+        await file.close()
+
+
 @app.get("/health")
 def health() -> dict:
     """Health check endpoint."""
@@ -93,8 +117,7 @@ async def transcriptions(
             },
         )
 
-    await file.seek(0)
-    audio_input = file.file
+    audio_input = await _decode_upload(file)
 
     options = _merge_options(
         base_options,
@@ -160,8 +183,7 @@ async def translations(
             },
         )
 
-    await file.seek(0)
-    audio_input = file.file
+    audio_input = await _decode_upload(file)
 
     options = _merge_options(
         base_options,

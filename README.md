@@ -3,7 +3,8 @@
 ## Overview
 
 FastAPI server for OpenAI-compatible audio transcription and translation using
-faster-whisper. Supports single-model or multi-model hosting.
+faster-whisper. Supports single-model or multi-model hosting. This fork accepts
+uncompressed PCM/float WAV uploads and decodes them without PyAV/FFmpeg.
 
 ## Install
 
@@ -26,7 +27,7 @@ uv tool install faster-whisper-server
 ### From GitHub
 
 ```bash
-pip install git+https://github.com/andyjjrt/faster-whisper-server.git
+pip install git+https://github.com/flobic09/faster-whisper-server.git
 ```
 
 ### Beta releases
@@ -43,7 +44,7 @@ pip install --pre \
 ### For development
 
 ```bash
-git clone https://github.com/andyjjrt/faster-whisper-server.git
+git clone https://github.com/flobic09/faster-whisper-server.git
 cd faster-whisper-server
 uv pip install -e ".[dev]"
 ```
